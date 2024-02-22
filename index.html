@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lucky 3</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f8e8d3;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-gap: 15px;
+            margin: 10px auto;
+            width: 340px;
+        }
+
+        .box {
+            border: 2px solid white;
+            border-radius: 10px;
+            width: 100px;
+            height: 100px;
+            background-color: gray;
+            cursor: pointer;
+        }
+
+        .box.selected {
+            border: 2px solid black;
+            border-radius: 20px;
+        }
+
+        h1 {
+            color: green;
+            font-size: 3em;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        p {
+            font-size: 15px;
+            text-align: center;
+            color: red;
+        }
+
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #FFFACD;
+            padding: 20px;
+            border: 2px solid black;
+            border-radius: 10px;
+            z-index: 9999;
+            display: none;
+        }
+
+        .popup.show {
+            display: block;
+            text-align: center;
+            font-size: 20px;
+        }
+
+        .popup h2 {
+            margin-top: 0;
+        }
+
+        .play-again-btn {
+            font-size: 15px;
+            font-weight: bold;
+            display: block;
+            margin: 2px auto;
+            padding: 10px 30px;
+            background-color: #4CAF50;
+            color: white;
+            border: 2px solid green;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .play-again-btn:hover {
+            transform: scale(1.2);
+    }
+    </style>
+</head>
+<body>
+    <div style="display: flex; flex-direction: column; align-items: center;">
+        <h1>Lucky 3</h1>
+        <p>Choose three boxes,<br>you need to get three matching colors to win.</p>
+        <div class="container" id="container">
+            <div class="box" onclick="selectBox(1)"></div>
+            <div class="box" onclick="selectBox(2)"></div>
+            <div class="box" onclick="selectBox(3)"></div>
+            <div class="box" onclick="selectBox(4)"></div>
+            <div class="box" onclick="selectBox(5)"></div>
+            <div class="box" onclick="selectBox(6)"></div>
+            <div class="box" onclick="selectBox(7)"></div>
+            <div class="box" onclick="selectBox(8)"></div>
+            <div class="box" onclick="selectBox(9)"></div>
+        </div>
+    </div>
+    <div class="popup" id="popup">
+        <h2 id="popup-message"></h2>
+        <button class="play-again-btn" onclick="resetGame()">Play Again</button>
+    </div>
+    
+    <script>
+        let selectedBoxes = [];
+
+        function selectBox(boxNumber) {
+            if (selectedBoxes.length < 3) {
+                const box = document.querySelector(`.box:nth-child(${boxNumber})`);
+
+                if (!selectedBoxes.includes(boxNumber)) {
+                    selectedBoxes.push(boxNumber);
+                    box.classList.add('selected');
+                    const colors = ['red', 'blue', 'yellow'];
+                    const randomColor = colors[Math.floor(Math.random() * colors.length)];
+                    box.style.backgroundColor = randomColor;
+                }
+
+                if (selectedBoxes.length === 3) {
+                    setTimeout(checkColors, 1000);
+                }
+            }
+        }
+
+        function checkColors() {
+            const colors = selectedBoxes.map(boxNum => {
+                const box = document.querySelector(`.box:nth-child(${boxNum})`);
+                return box.style.backgroundColor;
+            });
+
+            if (colors.every(color => color === colors[0])) {
+                showPopup('Congratulations! You won!');
+            } else {
+                showPopup('Sorry! Try again!');
+            }
+        }
+
+        function showPopup(message) {
+            const popup = document.getElementById('popup');
+            const popupMessage = document.getElementById('popup-message');
+            popupMessage.textContent = message;
+            popup.classList.add('show');
+        }
+
+        function resetGame() {
+            selectedBoxes = [];
+            const boxes = document.querySelectorAll('.box');
+            boxes.forEach(box => {
+                box.classList.remove('selected');
+                box.style.backgroundColor = 'gray';
+            });
+            document.getElementById('popup').classList.remove('show');
+        }
+    </script>
+</body>
+</html>
